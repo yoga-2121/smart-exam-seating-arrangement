@@ -3,26 +3,34 @@ package com.smart_exam_seating_arrangement;
 import com.smart_exam_seating_arrangement.entity.SeatingAssignment;
 import com.smart_exam_seating_arrangement.entity.Student;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-
-import org.springframework.mail.MailSendException;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    private final RestTemplate restTemplate;
 
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
+    @Value("${BREVO_API_KEY}")
+    private String brevoApiKey;
+
+    private static final String BREVO_URL =
+            "https://api.brevo.com/v3/smtp/email";
+
+    private static final String SENDER_EMAIL =
+            "smartexamseating@gmail.com";
+
+    public EmailService() {
+        this.restTemplate = new RestTemplate();
     }
-
 
     // =========================================================
     // SEND SELECTED SEATING EMAILS
@@ -32,124 +40,73 @@ public class EmailService {
             List<Student> students,
             List<SeatingAssignment> assignments) {
 
-        List<MimeMessage> messages = new ArrayList<>();
+        int sentCount = 0;
 
-        for (int i = 0; i < students.size(); i++) {
+        int count = Math.min(
+                students.size(),
+                assignments.size()
+        );
+
+        for (int i = 0; i < count; i++) {
 
             Student student = students.get(i);
             SeatingAssignment seating = assignments.get(i);
 
-            try {
+            String emailBody =
+                    "Dear Student,\n\n"
 
-                MimeMessage message =
-                        mailSender.createMimeMessage();
+                    + "Your examination seating details are given below:\n\n"
 
-                MimeMessageHelper helper =
-                        new MimeMessageHelper(message, false);
+                    + "Roll Number : "
+                    + student.getRollNumber()
+                    + "\n"
 
-                helper.setTo(student.getEmail());
+                    + "Branch      : "
+                    + seating.getBranch()
+                    + "\n"
 
-                helper.setSubject(
-                        "Smart Exam Seating Arrangement - Seating Details"
-                );
+                    + "Section     : "
+                    + seating.getSection()
+                    + "\n"
 
-                String emailBody =
-                        "Dear Student,\n\n"
+                    + "Subject     : "
+                    + seating.getSubject()
+                    + "\n"
 
-                        + "Your examination seating details are given below:\n\n"
+                    + "Room Number : "
+                    + seating.getRoomNumber()
+                    + "\n"
 
-                        + "Roll Number : "
-                        + student.getRollNumber()
-                        + "\n"
+                    + "Seat Number : "
+                    + seating.getSeatNumber()
+                    + "\n"
 
-                        + "Branch      : "
-                        + seating.getBranch()
-                        + "\n"
+                    + "Row         : "
+                    + seating.getSeatRow()
+                    + "\n"
 
-                        + "Section     : "
-                        + seating.getSection()
-                        + "\n"
+                    + "Column      : "
+                    + seating.getSeatColumn()
+                    + "\n\n"
 
-                        + "Subject     : "
-                        + seating.getSubject()
-                        + "\n"
+                    + "Please report to the examination hall on time.\n\n"
 
-                        + "Room Number : "
-                        + seating.getRoomNumber()
-                        + "\n"
+                    + "Best Regards,\n"
+                    + "Smart Exam Seating Arrangement System";
 
-                        + "Seat Number : "
-                        + seating.getSeatNumber()
-                        + "\n"
+            boolean sent = sendEmail(
+                    student.getEmail(),
+                    "Smart Exam Seating Arrangement - Seating Details",
+                    emailBody
+            );
 
-                        + "Row         : "
-                        + seating.getSeatRow()
-                        + "\n"
-
-                        + "Column      : "
-                        + seating.getSeatColumn()
-                        + "\n\n"
-
-                        + "Please report to the examination hall on time.\n\n"
-
-                        + "Best Regards,\n"
-                        + "Smart Exam Seating Arrangement System";
-
-                helper.setText(emailBody);
-
-                messages.add(message);
-
-            } catch (MessagingException e) {
-
-                System.out.println(
-                        "Could not prepare email for "
-                                + student.getRollNumber()
-                );
-
-                System.out.println(
-                        "Reason: "
-                                + e.getMessage()
-                );
+            if (sent) {
+                sentCount++;
             }
         }
 
-
-        if (messages.isEmpty()) {
-            return 0;
-        }
-
-
-        try {
-
-            mailSender.send(
-                    messages.toArray(
-                            new MimeMessage[0]
-                    )
-            );
-
-            return messages.size();
-
-        } catch (MailSendException e) {
-
-            System.out.println(
-                    "Email batch sending failed."
-            );
-
-            System.out.println(
-                    "Reason: "
-                            + e.getMessage()
-            );
-
-            if (e.getFailedMessages() != null) {
-
-                return messages.size()
-                        - e.getFailedMessages().size();
-            }
-
-            return 0;
-        }
+        return sentCount;
     }
-
 
     // =========================================================
     // SEND AUTOMATIC EXAM REMINDER
@@ -162,69 +119,158 @@ public class EmailService {
             String examinationDate,
             String startTime) {
 
-        try {
+        String emailBody =
+                "Dear Student,\n\n"
 
-            MimeMessage message =
-                    mailSender.createMimeMessage();
+                + "This is a reminder for your upcoming examination.\n\n"
 
-            MimeMessageHelper helper =
-                    new MimeMessageHelper(message, false);
+                + "Examination Type : "
+                + examinationType
+                + "\n"
 
-            helper.setTo(studentEmail);
+                + "Examination Date : "
+                + examinationDate
+                + "\n"
 
-            helper.setSubject(
-                    "Exam Reminder - Smart Exam Seating Arrangement"
-            );
+                + "Exam Start Time  : "
+                + startTime
+                + "\n"
 
-            String emailBody =
-                    "Dear Student,\n\n"
+                + "Roll Number      : "
+                + rollNumber
+                + "\n\n"
 
-                    + "This is a reminder for your upcoming examination.\n\n"
+                + "Your examination starts in 30 minutes.\n\n"
 
-                    + "Examination Type : "
-                    + examinationType
-                    + "\n"
+                + "Please report to the examination hall "
+                + "at least 15 minutes before the examination.\n\n"
 
-                    + "Examination Date : "
-                    + examinationDate
-                    + "\n"
+                + "Best Regards,\n"
+                + "Smart Exam Seating Arrangement System";
 
-                    + "Exam Start Time  : "
-                    + startTime
-                    + "\n"
+        boolean sent = sendEmail(
+                studentEmail,
+                "Exam Reminder - Smart Exam Seating Arrangement",
+                emailBody
+        );
 
-                    + "Roll Number      : "
-                    + rollNumber
-                    + "\n\n"
-
-                    + "Your examination starts in 30 minutes.\n\n"
-
-                    + "Please report to the examination hall "
-                    + "at least 15 minutes before the examination.\n\n"
-
-                    + "Best Regards,\n"
-                    + "Smart Exam Seating Arrangement System";
-
-            helper.setText(emailBody);
-
-            mailSender.send(message);
+        if (sent) {
 
             System.out.println(
                     "Reminder email sent to "
                             + rollNumber
             );
 
-        } catch (MessagingException e) {
+        } else {
 
             System.out.println(
-                    "Could not send reminder email to "
+                    "Reminder email failed for "
                             + rollNumber
+            );
+        }
+    }
+
+    // =========================================================
+    // BREVO HTTPS API
+    // =========================================================
+
+    private boolean sendEmail(
+            String recipient,
+            String subject,
+            String body) {
+
+        try {
+
+            HttpHeaders headers = new HttpHeaders();
+
+            headers.setContentType(
+                    MediaType.APPLICATION_JSON
+            );
+
+            headers.set(
+                    "api-key",
+                    brevoApiKey
+            );
+
+            // Sender
+            Map<String, Object> sender =
+                    new HashMap<>();
+
+            sender.put(
+                    "name",
+                    "Smart Exam Seating Arrangement"
+            );
+
+            sender.put(
+                    "email",
+                    SENDER_EMAIL
+            );
+
+            // Recipient
+            Map<String, Object> to =
+                    new HashMap<>();
+
+            to.put(
+                    "email",
+                    recipient
+            );
+
+            // Request body
+            Map<String, Object> request =
+                    new HashMap<>();
+
+            request.put(
+                    "sender",
+                    sender
+            );
+
+            request.put(
+                    "to",
+                    List.of(to)
+            );
+
+            request.put(
+                    "subject",
+                    subject
+            );
+
+            request.put(
+                    "textContent",
+                    body
+            );
+
+            HttpEntity<Map<String, Object>> entity =
+                    new HttpEntity<>(
+                            request,
+                            headers
+                    );
+
+            restTemplate.postForEntity(
+                    BREVO_URL,
+                    entity,
+                    String.class
+            );
+
+            System.out.println(
+                    "Email sent successfully to "
+                            + recipient
+            );
+
+            return true;
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Email sending failed for "
+                            + recipient
             );
 
             System.out.println(
                     "Reason: "
                             + e.getMessage()
             );
+
+            return false;
         }
     }
 }
