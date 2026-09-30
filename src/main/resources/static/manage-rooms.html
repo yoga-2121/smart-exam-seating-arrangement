@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Rooms</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e3a8a;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #1e3a8a;
+            margin-top: 35px;
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        input {
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #4f46e5;
+        }
+
+        .button-area {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .save-button {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .save-button:hover {
+            background: #3730a3;
+        }
+
+        .back-button {
+            background: #64748b;
+            color: white;
+        }
+
+        .back-button:hover {
+            background: #475569;
+        }
+
+        .delete-button {
+            background: #dc2626;
+            color: white;
+            padding: 8px 15px;
+        }
+
+        .delete-button:hover {
+            background: #991b1b;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #166534;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        th {
+            background: #4f46e5;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .no-rooms {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+        }
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-area {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Manage Rooms</h1>
+
+        <!-- Add Room Section -->
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label for="roomNumber">
+                    Room Number
+                </label>
+
+                <input
+                    type="text"
+                    id="roomNumber"
+                    placeholder="Example: A101"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="rows">
+                    Rows
+                </label>
+
+                <input
+                    type="number"
+                    id="rows"
+                    placeholder="Example: 5"
+                    min="1"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="columns">
+                    Columns
+                </label>
+
+                <input
+                    type="number"
+                    id="columns"
+                    placeholder="Example: 6"
+                    min="1"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="capacity">
+                    Capacity
+                </label>
+
+                <input
+                    type="number"
+                    id="capacity"
+                    placeholder="Example: 30"
+                    min="1"
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- Buttons -->
+
+        <div class="button-area">
+
+            <button
+                class="save-button"
+                onclick="saveRoom()"
+            >
+                Save Room
+            </button>
+
+
+            <button
+                class="back-button"
+                onclick="goBack()"
+            >
+                Back
+            </button>
+
+        </div>
+
+
+        <!-- Message -->
+
+        <p id="message"></p>
+
+
+        <!-- Available Rooms -->
+
+        <h2>Available Rooms</h2>
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Room Number</th>
+
+                        <th>Rows</th>
+
+                        <th>Columns</th>
+
+                        <th>Capacity</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="roomTableBody">
+
+                    <!-- Rooms will be loaded here -->
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // Save Room
+        async function saveRoom() {
+
+            const roomNumber =
+                document.getElementById("roomNumber").value.trim();
+
+            const rows =
+                document.getElementById("rows").value;
+
+            const columns =
+                document.getElementById("columns").value;
+
+            const capacity =
+                document.getElementById("capacity").value;
+
+
+            if (
+                roomNumber === "" ||
+                rows === "" ||
+                columns === "" ||
+                capacity === ""
+            ) {
+
+                document.getElementById("message").innerText =
+                    "Please fill all room details.";
+
+                return;
+            }
+
+
+            if (
+                parseInt(rows) <= 0 ||
+                parseInt(columns) <= 0 ||
+                parseInt(capacity) <= 0
+            ) {
+
+                document.getElementById("message").innerText =
+                    "Rows, columns and capacity must be greater than 0.";
+
+                return;
+            }
+
+
+            const room = {
+
+                roomNumber: roomNumber,
+
+                rows: parseInt(rows),
+
+                columns: parseInt(columns),
+
+                capacity: parseInt(capacity)
+
+            };
+
+
+            try {
+
+                const response = await fetch(
+                    "/api/rooms/save",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify(room)
+                    }
+                );
+
+
+                const result =
+                    await response.text();
+
+
+                document.getElementById("message").innerText =
+                    result;
+
+
+                // Clear fields after saving
+
+                document.getElementById("roomNumber").value = "";
+
+                document.getElementById("rows").value = "";
+
+                document.getElementById("columns").value = "";
+
+                document.getElementById("capacity").value = "";
+
+
+                // Reload rooms
+
+                loadRooms();
+
+            }
+
+            catch (error) {
+
+                document.getElementById("message").innerText =
+                    "Unable to save room.";
+
+                console.error(error);
+
+            }
+
+        }
+
+
+        // Load all rooms
+        async function loadRooms() {
+
+            try {
+
+                const response =
+                    await fetch("/api/rooms");
+
+
+                const rooms =
+                    await response.json();
+
+
+                const tableBody =
+                    document.getElementById("roomTableBody");
+
+
+                tableBody.innerHTML = "";
+
+
+                if (rooms.length === 0) {
+
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="no-rooms">
+                                No rooms available.
+                            </td>
+                        </tr>
+                    `;
+
+                    return;
+                }
+
+
+                rooms.forEach(room => {
+
+                    const row =
+                        document.createElement("tr");
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${room.roomNumber}
+                        </td>
+
+                        <td>
+                            ${room.rows}
+                        </td>
+
+                        <td>
+                            ${room.columns}
+                        </td>
+
+                        <td>
+                            ${room.capacity}
+                        </td>
+
+                        <td>
+
+                            <button
+                                class="delete-button"
+                                onclick="deleteRoom(${room.id})"
+                            >
+                                Delete
+                            </button>
+
+                        </td>
+
+                    `;
+
+
+                    tableBody.appendChild(row);
+
+                });
+
+            }
+
+            catch (error) {
+
+                document.getElementById("message").innerText =
+                    "Unable to load rooms.";
+
+                console.error(error);
+
+            }
+
+        }
+
+
+        // Delete Room
+        async function deleteRoom(id) {
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/rooms/${id}`,
+                        {
+                            method: "DELETE"
+                        }
+                    );
+
+
+                const result =
+                    await response.text();
+
+
+                document.getElementById("message").innerText =
+                    result;
+
+
+                // Reload rooms
+
+                loadRooms();
+
+            }
+
+            catch (error) {
+
+                document.getElementById("message").innerText =
+                    "Unable to delete room.";
+
+                console.error(error);
+
+            }
+
+        }
+
+
+        // Go back to Admin Dashboard
+        function goBack() {
+
+            window.location.href =
+                "admin-dashboard.html";
+
+        }
+
+
+        // Load rooms when page opens
+        loadRooms();
+
+    </script>
+
+</body>
+
+</html>

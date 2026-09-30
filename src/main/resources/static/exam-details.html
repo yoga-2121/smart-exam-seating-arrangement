@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Exam Details</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef4ff, #f7f0ff);
+        }
+
+        .header {
+            background: linear-gradient(90deg, #2563eb, #6d28d9);
+            color: white;
+            padding: 22px 40px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .form-card {
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .form-card h2 {
+            color: #1e293b;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+            color: #334155;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        .branch-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .section-title {
+            margin-top: 25px;
+            margin-bottom: 15px;
+            color: #4f46e5;
+            font-size: 18px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .buttons button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .clear-button {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .save-button {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .save-button:hover {
+            background: #3730a3;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 700px) {
+
+            .branch-section {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                width: 95%;
+            }
+
+            .form-card {
+                padding: 25px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>Smart Exam Seating Arrangement</h1>
+    </div>
+
+
+    <div class="container">
+
+        <div class="form-card">
+
+            <h2>Exam Details</h2>
+
+
+            <!-- Examination Type -->
+
+            <div class="form-group">
+
+                <label for="examType">
+                    Examination Type
+                </label>
+
+                <select id="examType">
+
+                    <option value="">
+                        Select Examination Type
+                    </option>
+
+                    <option value="Mid Examination - I">
+                        Mid Examination - I
+                    </option>
+
+                    <option value="Mid Examination - II">
+                        Mid Examination - II
+                    </option>
+
+                    <option value="Semester End Examination">
+                        Semester End Examination
+                    </option>
+
+                    <option value="Supplementary Examination">
+                        Supplementary Examination
+                    </option>
+
+                    <option value="Internal Examination">
+                        Internal Examination
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Date -->
+
+            <div class="form-group">
+
+                <label for="examDate">
+                    Examination Date
+                </label>
+
+                <input
+                    type="date"
+                    id="examDate"
+                >
+
+            </div>
+
+
+            <!-- Start Time -->
+
+            <div class="form-group">
+
+                <label for="startTime">
+                    Start Time
+                </label>
+
+                <input
+                    type="time"
+                    id="startTime"
+                >
+
+            </div>
+
+
+            <!-- End Time -->
+
+            <div class="form-group">
+
+                <label for="endTime">
+                    End Time
+                </label>
+
+                <input
+                    type="time"
+                    id="endTime"
+                >
+
+            </div>
+
+
+            <!-- Year -->
+
+            <div class="form-group">
+
+                <label for="year">
+                    Year
+                </label>
+
+                <select id="year">
+
+                    <option value="">
+                        Select Year
+                    </option>
+
+                    <option value="1">1st Year</option>
+                    <option value="2">2nd Year</option>
+                    <option value="3">3rd Year</option>
+                    <option value="4">4th Year</option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Semester -->
+
+            <div class="form-group">
+
+                <label for="semester">
+                    Semester
+                </label>
+
+                <select id="semester">
+
+                    <option value="">
+                        Select Semester
+                    </option>
+
+                    <option value="1">
+                        1st Semester
+                    </option>
+
+                    <option value="2">
+                        2nd Semester
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- FIRST BRANCH -->
+
+            <div class="section-title">
+                First Branch / Section / Subject
+            </div>
+
+            <div class="branch-section">
+
+                <div class="form-group">
+
+                    <label for="branch1">
+                        Branch
+                    </label>
+
+                    <select id="branch1">
+
+                        <option value="">Select Branch</option>
+
+                        <option value="IT">IT</option>
+                        <option value="CSE">CSE</option>
+                        <option value="AIML">AIML</option>
+                        <option value="AIDS">AIDS</option>
+                        <option value="Cyber Security">
+                            Cyber Security
+                        </option>
+                        <option value="ECE">ECE</option>
+                        <option value="EEE">EEE</option>
+                        <option value="MECH">MECH</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="section1">
+                        Section
+                    </label>
+
+                    <select id="section1">
+
+                        <option value="">Select Section</option>
+
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="subject1">
+                        Subject
+                    </label>
+
+                    <input
+                        type="text"
+                        id="subject1"
+                        placeholder="Example: DM&GT"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- SECOND BRANCH -->
+
+            <div class="section-title">
+                Second Branch / Section / Subject
+            </div>
+
+            <div class="branch-section">
+
+                <div class="form-group">
+
+                    <label for="branch2">
+                        Branch
+                    </label>
+
+                    <select id="branch2">
+
+                        <option value="">Select Branch</option>
+
+                        <option value="IT">IT</option>
+                        <option value="CSE">CSE</option>
+                        <option value="AIML">AIML</option>
+                        <option value="AIDS">AIDS</option>
+                        <option value="Cyber Security">
+                            Cyber Security
+                        </option>
+                        <option value="ECE">ECE</option>
+                        <option value="EEE">EEE</option>
+                        <option value="MECH">MECH</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="section2">
+                        Section
+                    </label>
+
+                    <select id="section2">
+
+                        <option value="">Select Section</option>
+
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="subject2">
+                        Subject
+                    </label>
+
+                    <input
+                        type="text"
+                        id="subject2"
+                        placeholder="Example: UHV"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="buttons">
+
+                <button
+                    class="clear-button"
+                    onclick="clearForm()">
+                    Clear
+                </button>
+
+                <button
+                    class="save-button"
+                    onclick="saveExam()">
+                    Save Examination
+                </button>
+
+            </div>
+
+
+            <div id="message"></div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        function clearForm() {
+
+            document.getElementById("examType").value = "";
+            document.getElementById("examDate").value = "";
+            document.getElementById("startTime").value = "";
+            document.getElementById("endTime").value = "";
+
+            document.getElementById("year").value = "";
+            document.getElementById("semester").value = "";
+
+            document.getElementById("branch1").value = "";
+            document.getElementById("section1").value = "";
+            document.getElementById("subject1").value = "";
+
+            document.getElementById("branch2").value = "";
+            document.getElementById("section2").value = "";
+            document.getElementById("subject2").value = "";
+
+            document.getElementById("message").innerText = "";
+
+        }
+
+
+        async function saveExam() {
+
+            const examData = {
+
+                examinationType:
+                    document.getElementById("examType").value,
+
+                examinationDate:
+                    document.getElementById("examDate").value,
+
+                startTime:
+                    document.getElementById("startTime").value,
+
+                endTime:
+                    document.getElementById("endTime").value,
+
+                year:
+                    parseInt(document.getElementById("year").value),
+
+                semester:
+                    parseInt(document.getElementById("semester").value),
+
+                branch1:
+                    document.getElementById("branch1").value,
+
+                section1:
+                    document.getElementById("section1").value,
+
+                subject1:
+                    document.getElementById("subject1").value,
+
+                branch2:
+                    document.getElementById("branch2").value,
+
+                section2:
+                    document.getElementById("section2").value,
+
+                subject2:
+                    document.getElementById("subject2").value
+            };
+
+
+            if (
+                !examData.examinationType ||
+                !examData.examinationDate ||
+                !examData.startTime ||
+                !examData.endTime ||
+                !examData.year ||
+                !examData.semester ||
+                !examData.branch1 ||
+                !examData.section1 ||
+                !examData.subject1 ||
+                !examData.branch2 ||
+                !examData.section2 ||
+                !examData.subject2
+            ) {
+
+                document.getElementById("message").innerText =
+                    "Please fill all exam details.";
+
+                return;
+            }
+
+
+            try {
+
+                const response = await fetch(
+                    "/api/exams/save",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify(examData)
+                    }
+                );
+
+
+                const result = await response.text();
+
+
+                if (response.ok) {
+
+                    document.getElementById("message").innerText =
+                        result;
+
+                } else {
+
+                    document.getElementById("message").innerText =
+                        "Failed to save exam details.";
+
+                }
+
+            } catch (error) {
+
+                document.getElementById("message").innerText =
+                    "Server connection failed.";
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>

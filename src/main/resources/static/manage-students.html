@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Students</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+            padding: 35px;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e3a8a;
+            margin-bottom: 30px;
+        }
+
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+
+        .search-box {
+            flex: 1;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #4f46e5;
+        }
+
+        .back-button {
+            padding: 12px 20px;
+            background: #64748b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            background: #475569;
+        }
+
+        #message {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #dc2626;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 13px 10px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #4f46e5;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        tr:hover {
+            background: #eef2ff;
+        }
+
+        .count {
+            margin-bottom: 15px;
+            color: #475569;
+            font-weight: bold;
+        }
+
+        .no-students {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+        }
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .top-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .back-button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="container">
+
+        <h1>
+            Manage Students
+        </h1>
+
+
+        <div class="top-section">
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search by Roll Number, Branch or Section..."
+                    onkeyup="searchStudents()"
+                >
+
+            </div>
+
+
+            <button
+                class="back-button"
+                onclick="goBack()"
+            >
+                Back
+            </button>
+
+        </div>
+
+
+        <p id="message"></p>
+
+
+        <div class="count">
+
+            Total Students:
+            <span id="studentCount">0</span>
+
+        </div>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>S.No</th>
+
+                        <th>Roll Number</th>
+
+                        <th>Branch</th>
+
+                        <th>Section</th>
+
+                        <th>Year</th>
+
+                        <th>Student Type</th>
+
+                        <th>Email</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="studentTableBody">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        let allStudents = [];
+
+
+        // Load students from database
+
+        async function loadStudents() {
+
+            try {
+
+                const response =
+                    await fetch("/api/students");
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Failed to load students"
+                    );
+
+                }
+
+
+                allStudents =
+                    await response.json();
+
+
+                displayStudents(allStudents);
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                document.getElementById("message").innerText =
+                    "Unable to load students.";
+
+            }
+
+        }
+
+
+        // Display students
+
+        function displayStudents(students) {
+
+            const tableBody =
+                document.getElementById(
+                    "studentTableBody"
+                );
+
+
+            tableBody.innerHTML = "";
+
+
+            document.getElementById(
+                "studentCount"
+            ).innerText = students.length;
+
+
+            if (students.length === 0) {
+
+                tableBody.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="no-students"
+                        >
+                            No students found.
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+
+            }
+
+
+            students.forEach(
+                (student, index) => {
+
+                    const row =
+                        document.createElement("tr");
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            ${student.rollNumber}
+                        </td>
+
+                        <td>
+                            ${student.branch}
+                        </td>
+
+                        <td>
+                            ${student.section}
+                        </td>
+
+                        <td>
+                            ${student.year}
+                        </td>
+
+                        <td>
+                            ${student.studentType}
+                        </td>
+
+                        <td>
+                            ${student.email}
+                        </td>
+
+                    `;
+
+
+                    tableBody.appendChild(row);
+
+                }
+            );
+
+        }
+
+
+        // Search students
+
+        function searchStudents() {
+
+            const searchText =
+                document.getElementById(
+                    "searchInput"
+                ).value
+                .toLowerCase()
+                .trim();
+
+
+            if (searchText === "") {
+
+                displayStudents(allStudents);
+
+                return;
+
+            }
+
+
+            const filteredStudents =
+                allStudents.filter(
+                    student =>
+
+                        student.rollNumber
+                            .toLowerCase()
+                            .includes(searchText)
+
+                        ||
+
+                        student.branch
+                            .toLowerCase()
+                            .includes(searchText)
+
+                        ||
+
+                        student.section
+                            .toLowerCase()
+                            .includes(searchText)
+
+                        ||
+
+                        student.studentType
+                            .toLowerCase()
+                            .includes(searchText)
+
+                );
+
+
+            displayStudents(filteredStudents);
+
+        }
+
+
+        // Back to Admin Dashboard
+
+        function goBack() {
+
+            window.location.href =
+                "admin-dashboard.html";
+
+        }
+
+
+        // Load students when page opens
+
+        loadStudents();
+
+    </script>
+
+</body>
+
+</html>

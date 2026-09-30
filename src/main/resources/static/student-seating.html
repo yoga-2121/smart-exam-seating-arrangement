@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>My Seating Arrangement</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+
+            min-height: 100vh;
+
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #dcefff,
+                    #eef4ff
+                );
+
+            padding: 30px 20px;
+        }
+
+        .container {
+
+            max-width: 850px;
+
+            margin: auto;
+        }
+
+        /* HEADER */
+
+        .header {
+
+            background: white;
+
+            padding: 25px 30px;
+
+            border-radius: 20px;
+
+            text-align: center;
+
+            box-shadow:
+                0 15px 35px
+                rgba(0, 45, 100, 0.15);
+
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+
+            color: #123b91;
+
+            margin-bottom: 8px;
+        }
+
+        .header p {
+
+            color: #5b6b85;
+
+            font-size: 14px;
+        }
+
+        /* SEATING CARD */
+
+        .seating-card {
+
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 12px 30px
+                rgba(0, 45, 100, 0.12);
+        }
+
+        .seating-title {
+
+            text-align: center;
+
+            color: #2454a0;
+
+            font-size: 23px;
+
+            margin-bottom: 25px;
+        }
+
+        .details {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(220px, 1fr)
+                );
+
+            gap: 15px;
+        }
+
+        .detail {
+
+            background: #f4f7ff;
+
+            padding: 17px;
+
+            border-radius: 11px;
+
+            border-left:
+                4px solid #4265dc;
+        }
+
+        .detail strong {
+
+            display: block;
+
+            color: #5b6b85;
+
+            font-size: 13px;
+
+            margin-bottom: 6px;
+        }
+
+        .detail span {
+
+            color: #263c68;
+
+            font-size: 17px;
+
+            font-weight: 700;
+        }
+
+        /* IMPORTANT SEAT */
+
+        .seat-highlight {
+
+            margin-top: 25px;
+
+            padding: 25px;
+
+            border-radius: 16px;
+
+            text-align: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef3ff,
+                    #f6f1ff
+                );
+        }
+
+        .seat-highlight p {
+
+            color: #5b6b85;
+
+            font-size: 14px;
+
+            margin-bottom: 8px;
+        }
+
+        .seat-number {
+
+            color: #2457dc;
+
+            font-size: 32px;
+
+            font-weight: 800;
+        }
+
+        /* MESSAGE */
+
+        .message {
+
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 18px;
+
+            text-align: center;
+
+            color: #667085;
+
+            box-shadow:
+                0 10px 25px
+                rgba(0, 45, 100, 0.10);
+        }
+
+        /* BACK BUTTON */
+
+        .back-button {
+
+            display: block;
+
+            margin: 25px auto 0;
+
+            border: none;
+
+            padding: 12px 25px;
+
+            border-radius: 25px;
+
+            background: white;
+
+            color: #315bd3;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 5px 15px
+                rgba(0, 45, 100, 0.10);
+        }
+
+        .back-button:hover {
+
+            transform: translateY(-1px);
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            body {
+
+                padding: 20px 12px;
+            }
+
+            .seating-card {
+
+                padding: 22px;
+            }
+
+            .header h1 {
+
+                font-size: 25px;
+            }
+
+            .seat-number {
+
+                font-size: 28px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h1>
+            My Seating Arrangement
+        </h1>
+
+        <p>
+            Your examination room and seat details
+        </p>
+
+    </div>
+
+    <!-- CONTENT -->
+
+    <div id="content">
+
+        <div class="message">
+
+            Loading seating details...
+
+        </div>
+
+    </div>
+
+    <!-- BACK BUTTON -->
+
+    <button
+        class="back-button"
+        onclick="goBack()">
+
+        ← Back to Dashboard
+
+    </button>
+
+</div>
+
+<script>
+
+/* =========================
+   GET LOGGED-IN STUDENT
+   ========================= */
+
+const rollNumber =
+    sessionStorage.getItem(
+        "studentRollNumber"
+    );
+
+
+/* =========================
+   LOGIN CHECK
+   ========================= */
+
+if (!rollNumber) {
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* =========================
+   LOAD SEATING
+   ========================= */
+
+async function loadSeating() {
+
+    const content =
+        document.getElementById(
+            "content"
+        );
+
+    try {
+
+        /*
+         * IMPORTANT:
+         * Backend gets the logged-in
+         * student from HttpSession.
+         *
+         * Do NOT append rollNumber
+         * to this URL.
+         */
+
+        const response =
+            await fetch(
+                "/api/seating/student"
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load seating"
+            );
+
+        }
+
+
+        const seatingList =
+            await response.json();
+
+
+        /* =========================
+           NO SEATING
+           ========================= */
+
+        if (
+            !seatingList
+            ||
+            seatingList.length === 0
+        ) {
+
+            content.innerHTML = `
+
+                <div class="message">
+
+                    Seating has not been
+                    generated for you yet.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        /*
+         * Usually there will be one
+         * seating assignment for a student.
+         *
+         * Display the first assignment.
+         */
+
+        const seating =
+            seatingList[0];
+
+
+        /* =========================
+           DISPLAY SEATING
+           ========================= */
+
+        content.innerHTML = `
+
+            <div class="seating-card">
+
+                <div class="seating-title">
+
+                    Your Examination Seat
+
+                </div>
+
+
+                <div class="details">
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Roll Number
+                        </strong>
+
+                        <span>
+                            ${seating.rollNumber}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Branch
+                        </strong>
+
+                        <span>
+                            ${seating.branch}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Section
+                        </strong>
+
+                        <span>
+                            ${seating.section}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Subject
+                        </strong>
+
+                        <span>
+                            ${seating.subject}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Room Number
+                        </strong>
+
+                        <span>
+                            ${seating.roomNumber}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Row
+                        </strong>
+
+                        <span>
+                            ${seating.seatRow}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Column
+                        </strong>
+
+                        <span>
+                            ${seating.seatColumn}
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="seat-highlight">
+
+                    <p>
+                        Your Seat Number
+                    </p>
+
+                    <div class="seat-number">
+
+                        ${seating.seatNumber}
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        `;
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "Seating loading error:",
+            error
+        );
+
+
+        content.innerHTML = `
+
+            <div class="message">
+
+                Unable to load seating details.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================
+   BACK TO DASHBOARD
+   ========================= */
+
+function goBack() {
+
+    window.location.href =
+        "student-dashboard.html";
+
+}
+
+
+/* =========================
+   LOAD PAGE
+   ========================= */
+
+loadSeating();
+
+</script>
+
+</body>
+
+</html>

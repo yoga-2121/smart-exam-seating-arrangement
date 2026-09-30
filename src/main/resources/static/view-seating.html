@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>View Seating Arrangement</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #dcefff,
+                    #eef4ff
+                );
+
+            padding: 30px 20px;
+        }
+
+
+        .container {
+
+            max-width: 1200px;
+
+            margin: auto;
+        }
+
+
+        /* HEADER */
+
+        .header {
+
+            background: white;
+
+            padding: 25px 30px;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 15px 35px
+                rgba(0, 45, 100, 0.15);
+
+            margin-bottom: 25px;
+        }
+
+
+        .header h1 {
+
+            color: #123b91;
+
+            margin-bottom: 8px;
+        }
+
+
+        .header p {
+
+            color: #5b6b85;
+        }
+
+
+        /* SELECT AREA */
+
+        .selection-box {
+
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 10px 25px
+                rgba(0, 45, 100, 0.12);
+
+            margin-bottom: 20px;
+        }
+
+
+        .selection-box label {
+
+            display: block;
+
+            color: #203f78;
+
+            font-weight: 700;
+
+            margin-bottom: 8px;
+        }
+
+
+        .selection-box select {
+
+            width: 100%;
+
+            max-width: 600px;
+
+            height: 48px;
+
+            padding: 0 14px;
+
+            border: 1px solid #ccd7ea;
+
+            border-radius: 10px;
+
+            background: white;
+
+            color: #263c68;
+
+            font-size: 15px;
+
+            outline: none;
+        }
+
+
+        .selection-box select:focus {
+
+            border-color: #4265dc;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(66, 101, 220, 0.10);
+        }
+
+
+        /* SUMMARY */
+
+        .summary {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(180px, 1fr)
+                );
+
+            gap: 15px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .summary-card {
+
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 8px 20px
+                rgba(0, 45, 100, 0.10);
+
+            text-align: center;
+        }
+
+
+        .summary-card h3 {
+
+            color: #5b6b85;
+
+            font-size: 14px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .summary-card p {
+
+            color: #123b91;
+
+            font-size: 28px;
+
+            font-weight: 800;
+        }
+
+
+        /* TABLE */
+
+        .table-container {
+
+            background: white;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 10px 25px
+                rgba(0, 45, 100, 0.12);
+
+            overflow-x: auto;
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 900px;
+        }
+
+
+        thead {
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2457dc,
+                    #6549df
+                );
+
+            color: white;
+        }
+
+
+        th {
+
+            padding: 14px 12px;
+
+            font-size: 14px;
+
+            white-space: nowrap;
+        }
+
+
+        td {
+
+            padding: 13px 12px;
+
+            text-align: center;
+
+            color: #263c68;
+
+            border-bottom:
+                1px solid #e4e9f2;
+
+            font-size: 14px;
+        }
+
+
+        tbody tr:hover {
+
+            background: #f5f8ff;
+        }
+
+
+        .empty-message {
+
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 18px;
+
+            text-align: center;
+
+            color: #667085;
+
+            box-shadow:
+                0 10px 25px
+                rgba(0, 45, 100, 0.12);
+        }
+
+
+        /* BACK BUTTON */
+
+        .back-button {
+
+            margin-top: 20px;
+
+            border: none;
+
+            padding: 12px 25px;
+
+            border-radius: 25px;
+
+            background: white;
+
+            color: #315bd3;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 5px 15px
+                rgba(0, 45, 100, 0.10);
+        }
+
+
+        .back-button:hover {
+
+            transform: translateY(-1px);
+        }
+
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            body {
+
+                padding: 20px 12px;
+            }
+
+
+            .header {
+
+                padding: 22px 20px;
+            }
+
+
+            .header h1 {
+
+                font-size: 25px;
+            }
+
+
+            .selection-box {
+
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h1>
+            View Seating Arrangement
+        </h1>
+
+        <p>
+            Select an examination to view
+            the complete seating arrangement.
+        </p>
+
+    </div>
+
+
+    <!-- EXAM SELECT -->
+
+    <div class="selection-box">
+
+        <label for="examSelect">
+            Select Examination
+        </label>
+
+
+        <select
+            id="examSelect"
+            onchange="loadSeating()">
+
+            <option value="">
+                Select Examination
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div
+        class="summary"
+        id="summary"
+        style="display: none;">
+
+        <div class="summary-card">
+
+            <h3>
+                Total Students
+            </h3>
+
+            <p id="totalStudents">
+                0
+            </p>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>
+                Rooms Used
+            </h3>
+
+            <p id="roomsUsed">
+                0
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div id="tableArea">
+
+        <div class="empty-message">
+
+            Select an examination to view
+            seating details.
+
+        </div>
+
+    </div>
+
+
+    <!-- BACK -->
+
+    <button
+        class="back-button"
+        onclick="goBack()">
+
+        ← Back to Admin Dashboard
+
+    </button>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =========================
+   LOAD EXAMS
+   ========================= */
+
+async function loadExams() {
+
+    const examSelect =
+        document.getElementById(
+            "examSelect"
+        );
+
+
+    try {
+
+        const response =
+            await fetch("/api/exams");
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to load exams"
+            );
+        }
+
+
+        const exams =
+            await response.json();
+
+
+        exams.forEach(exam => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                exam.id;
+
+
+            option.textContent =
+                exam.examinationType
+                + " | "
+                + exam.examinationDate
+                + " | "
+                + exam.branch1
+                + "-"
+                + exam.section1
+                + " / "
+                + exam.branch2
+                + "-"
+                + exam.section2;
+
+
+            examSelect.appendChild(
+                option
+            );
+
+        });
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "tableArea"
+        ).innerHTML = `
+
+            <div class="empty-message">
+
+                Failed to load examinations.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+
+/* =========================
+   LOAD SEATING
+   ========================= */
+
+async function loadSeating() {
+
+    const examId =
+        document.getElementById(
+            "examSelect"
+        ).value;
+
+
+    const summary =
+        document.getElementById(
+            "summary"
+        );
+
+
+    const tableArea =
+        document.getElementById(
+            "tableArea"
+        );
+
+
+    if (!examId) {
+
+        summary.style.display =
+            "none";
+
+
+        tableArea.innerHTML = `
+
+            <div class="empty-message">
+
+                Select an examination to view
+                seating details.
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    tableArea.innerHTML = `
+
+        <div class="empty-message">
+
+            Loading seating arrangement...
+
+        </div>
+
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/seating/exam/"
+                + examId
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to load seating"
+            );
+        }
+
+
+        const seating =
+            await response.json();
+
+
+        if (seating.length === 0) {
+
+            summary.style.display =
+                "none";
+
+
+            tableArea.innerHTML = `
+
+                <div class="empty-message">
+
+                    Seating has not been
+                    generated for this examination.
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        /* TOTAL STUDENTS */
+
+        document.getElementById(
+            "totalStudents"
+        ).innerText =
+            seating.length;
+
+
+        /* UNIQUE ROOMS */
+
+        const rooms =
+            new Set(
+                seating.map(
+                    seat =>
+                        seat.roomNumber
+                )
+            );
+
+
+        document.getElementById(
+            "roomsUsed"
+        ).innerText =
+            rooms.size;
+
+
+        summary.style.display =
+            "grid";
+
+
+        /* CREATE TABLE */
+
+        let html = `
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>S.No</th>
+
+                            <th>Roll Number</th>
+
+                            <th>Branch</th>
+
+                            <th>Section</th>
+
+                            <th>Subject</th>
+
+                            <th>Room</th>
+
+                            <th>Seat</th>
+
+                            <th>Row</th>
+
+                            <th>Column</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+        `;
+
+
+        seating.forEach(
+            (seat, index) => {
+
+                html += `
+
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            ${seat.rollNumber}
+                        </td>
+
+                        <td>
+                            ${seat.branch}
+                        </td>
+
+                        <td>
+                            ${seat.section}
+                        </td>
+
+                        <td>
+                            ${seat.subject}
+                        </td>
+
+                        <td>
+                            ${seat.roomNumber}
+                        </td>
+
+                        <td>
+                            ${seat.seatNumber}
+                        </td>
+
+                        <td>
+                            ${seat.seatRow}
+                        </td>
+
+                        <td>
+                            ${seat.seatColumn}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+
+        html += `
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+
+        tableArea.innerHTML =
+            html;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        summary.style.display =
+            "none";
+
+
+        tableArea.innerHTML = `
+
+            <div class="empty-message">
+
+                Failed to load seating arrangement.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+
+/* =========================
+   BACK
+   ========================= */
+
+function goBack() {
+
+    window.location.href =
+        "admin-dashboard.html";
+
+}
+
+
+
+/* =========================
+   START
+   ========================= */
+
+loadExams();
+
+</script>
+
+
+</body>
+
+</html>

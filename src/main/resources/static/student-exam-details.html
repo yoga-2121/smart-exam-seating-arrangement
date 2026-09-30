@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Student Exam Details</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #dcefff,
+                    #eef4ff
+                );
+
+            padding: 30px 20px;
+        }
+
+
+        .container {
+
+            max-width: 850px;
+
+            margin: auto;
+        }
+
+
+        /* HEADER */
+
+        .header {
+
+            background: white;
+
+            padding: 25px 30px;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 15px 35px
+                rgba(0, 45, 100, 0.15);
+
+            margin-bottom: 25px;
+
+            text-align: center;
+        }
+
+
+        .header h1 {
+
+            color: #123b91;
+
+            margin-bottom: 8px;
+        }
+
+
+        .header p {
+
+            color: #5b6b85;
+
+            font-size: 14px;
+        }
+
+
+        /* EXAM CARD */
+
+        .exam-card {
+
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 12px 30px
+                rgba(0, 45, 100, 0.12);
+        }
+
+
+        .exam-title {
+
+            text-align: center;
+
+            color: #2454a0;
+
+            font-size: 23px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .details {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(220px, 1fr)
+                );
+
+            gap: 15px;
+        }
+
+
+        .detail {
+
+            background: #f4f7ff;
+
+            padding: 16px;
+
+            border-radius: 11px;
+
+            border-left:
+                4px solid #4265dc;
+        }
+
+
+        .detail strong {
+
+            display: block;
+
+            color: #5b6b85;
+
+            font-size: 13px;
+
+            margin-bottom: 6px;
+        }
+
+
+        .detail span {
+
+            color: #263c68;
+
+            font-size: 16px;
+
+            font-weight: 700;
+        }
+
+
+        /* MESSAGE */
+
+        .message {
+
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 18px;
+
+            text-align: center;
+
+            color: #667085;
+
+            box-shadow:
+                0 10px 25px
+                rgba(0, 45, 100, 0.10);
+        }
+
+
+        /* BACK BUTTON */
+
+        .back-button {
+
+            display: block;
+
+            margin: 25px auto 0;
+
+            border: none;
+
+            padding: 12px 25px;
+
+            border-radius: 25px;
+
+            background: white;
+
+            color: #315bd3;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 5px 15px
+                rgba(0, 45, 100, 0.10);
+        }
+
+
+        .back-button:hover {
+
+            transform: translateY(-1px);
+        }
+
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            body {
+
+                padding: 20px 12px;
+            }
+
+
+            .exam-card {
+
+                padding: 22px;
+            }
+
+
+            .header h1 {
+
+                font-size: 25px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h1>
+            My Examination Details
+        </h1>
+
+        <p>
+            Examination information for the
+            logged-in student
+        </p>
+
+    </div>
+
+
+    <!-- CONTENT -->
+
+    <div id="content">
+
+        <div class="message">
+
+            Loading examination details...
+
+        </div>
+
+    </div>
+
+
+    <!-- BACK -->
+
+    <button
+        class="back-button"
+        onclick="goBack()">
+
+        ← Back to Dashboard
+
+    </button>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =========================
+   GET STUDENT
+   ========================= */
+
+const rollNumber =
+    sessionStorage.getItem(
+        "studentRollNumber"
+    );
+
+
+/* =========================
+   LOGIN CHECK
+   ========================= */
+
+if (!rollNumber) {
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* =========================
+   LOAD EXAM DETAILS
+   ========================= */
+
+async function loadExamDetails() {
+
+    const content =
+        document.getElementById(
+            "content"
+        );
+
+
+    try {
+
+        /* GET STUDENT PROFILE */
+
+        const profileResponse =
+            await fetch(
+                "/api/student/profile?rollNumber="
+                + encodeURIComponent(
+                    rollNumber
+                )
+            );
+
+
+        if (!profileResponse.ok) {
+
+            throw new Error(
+                "Unable to load student profile"
+            );
+        }
+
+
+        const student =
+            await profileResponse.json();
+
+
+        if (!student) {
+
+            content.innerHTML = `
+
+                <div class="message">
+
+                    Student profile not found.
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        /* GET EXAMS */
+
+        const examResponse =
+            await fetch(
+                "/api/student/exams?rollNumber="
+                + encodeURIComponent(
+                    rollNumber
+                )
+            );
+
+
+        if (!examResponse.ok) {
+
+            throw new Error(
+                "Unable to load exams"
+            );
+        }
+
+
+        const exams =
+            await examResponse.json();
+
+
+        if (!exams || exams.length === 0) {
+
+            content.innerHTML = `
+
+                <div class="message">
+
+                    No examination has been
+                    scheduled for you yet.
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        /*
+         * Find the exam that matches
+         * the student's branch and section.
+         */
+
+        let selectedExam = null;
+        let selectedSubject = "";
+
+
+        for (const exam of exams) {
+
+            if (
+                student.branch.toUpperCase()
+                ===
+                exam.branch1.toUpperCase()
+
+                &&
+
+                student.section.toUpperCase()
+                ===
+                exam.section1.toUpperCase()
+            ) {
+
+                selectedExam = exam;
+
+                selectedSubject =
+                    exam.subject1;
+
+                break;
+            }
+
+
+            if (
+                student.branch.toUpperCase()
+                ===
+                exam.branch2.toUpperCase()
+
+                &&
+
+                student.section.toUpperCase()
+                ===
+                exam.section2.toUpperCase()
+            ) {
+
+                selectedExam = exam;
+
+                selectedSubject =
+                    exam.subject2;
+
+                break;
+            }
+
+        }
+
+
+        if (!selectedExam) {
+
+            content.innerHTML = `
+
+                <div class="message">
+
+                    No matching examination
+                    details found for your
+                    branch and section.
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        /* DISPLAY */
+
+        content.innerHTML = `
+
+            <div class="exam-card">
+
+                <div class="exam-title">
+
+                    ${selectedExam.examinationType}
+
+                </div>
+
+
+                <div class="details">
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Examination Type
+                        </strong>
+
+                        <span>
+                            ${selectedExam.examinationType}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Examination Date
+                        </strong>
+
+                        <span>
+                            ${selectedExam.examinationDate}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Start Time
+                        </strong>
+
+                        <span>
+                            ${selectedExam.startTime}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            End Time
+                        </strong>
+
+                        <span>
+                            ${selectedExam.endTime}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Year
+                        </strong>
+
+                        <span>
+                            ${selectedExam.year}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Semester
+                        </strong>
+
+                        <span>
+                            ${selectedExam.semester}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Branch
+                        </strong>
+
+                        <span>
+                            ${student.branch}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Section
+                        </strong>
+
+                        <span>
+                            ${student.section}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Roll Number
+                        </strong>
+
+                        <span>
+                            ${student.rollNumber}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <strong>
+                            Subject
+                        </strong>
+
+                        <span>
+                            ${selectedSubject}
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        `;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        content.innerHTML = `
+
+            <div class="message">
+
+                Unable to load examination details.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================
+   BACK
+   ========================= */
+
+function goBack() {
+
+    window.location.href =
+        "student-dashboard.html";
+
+}
+
+
+/* =========================
+   START
+   ========================= */
+
+loadExamDetails();
+
+</script>
+
+
+</body>
+
+</html>

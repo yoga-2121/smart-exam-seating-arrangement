@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Generate Seating - Smart Exam Seating Arrangement</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+    <style>
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(
+                135deg,
+                #dcefff,
+                #eef4ff
+            );
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .page-container {
+            width: 100%;
+            min-height: 100vh;
+            padding: 35px 20px;
+        }
+
+        .page-box {
+            width: 100%;
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 22px;
+            box-shadow:
+                0 20px 50px
+                rgba(0, 45, 100, 0.15);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            color: #123b91;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #60708f;
+            font-size: 15px;
+        }
+
+        .exam-card {
+            border: 1px solid #d7e1f2;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            background: #f9fbff;
+        }
+
+        .exam-title {
+            color: #173f8f;
+            font-size: 21px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .exam-details {
+            display: grid;
+            grid-template-columns:
+                repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .detail-box {
+            background: white;
+            border: 1px solid #e0e7f2;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .detail-label {
+            color: #71809b;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: #203f78;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .student-section {
+            margin-top: 25px;
+        }
+
+        .student-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .student-section-header h3 {
+            color: #173f8f;
+            margin: 0;
+        }
+
+        .select-all-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #315bd3;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .student-table-container {
+            width: 100%;
+            overflow-x: auto;
+            background: white;
+            border: 1px solid #dce4f1;
+            border-radius: 12px;
+        }
+
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        .student-table th {
+            background: #edf3ff;
+            color: #244785;
+            padding: 13px 10px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .student-table td {
+            padding: 12px 10px;
+            border-top: 1px solid #edf0f5;
+            text-align: center;
+            color: #35496d;
+            font-size: 13px;
+        }
+
+        .student-table tr:hover {
+            background: #f7faff;
+        }
+
+        .student-table input[type="checkbox"] {
+            width: 17px;
+            height: 17px;
+            cursor: pointer;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 22px;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            flex: 1;
+            min-width: 200px;
+            height: 48px;
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .generate-button {
+            background:
+                linear-gradient(
+                    90deg,
+                    #2457dc,
+                    #6549df
+                );
+        }
+
+        .email-button {
+            background:
+                linear-gradient(
+                    90deg,
+                    #159957,
+                    #2eae68
+                );
+        }
+
+        .back-button {
+            width: 100%;
+            height: 45px;
+            margin-top: 20px;
+            border: 1px solid #c9d5e8;
+            border-radius: 23px;
+            background: white;
+            color: #31528c;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .action-button:hover,
+        .back-button:hover {
+            transform: translateY(-1px);
+        }
+
+        #message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 9px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .success-message {
+            display: block !important;
+            background: #e9f9ef;
+            color: #187a3d;
+            border: 1px solid #bde8ca;
+        }
+
+        .error-message {
+            display: block !important;
+            background: #fff0f0;
+            color: #c62828;
+            border: 1px solid #f2c4c4;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 25px;
+            color: #71809b;
+            font-size: 14px;
+        }
+
+        @media (max-width: 800px) {
+
+            .exam-details {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .page-box {
+                padding: 25px 18px;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .exam-details {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 26px;
+            }
+
+            .student-section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .action-button {
+                min-width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="page-container">
+
+    <div class="page-box">
+
+        <div class="page-header">
+
+            <h1>Generate Exam Seating</h1>
+
+            <p>
+                Generate seating arrangements and send emails
+                only to selected students.
+            </p>
+
+        </div>
+
+        <div id="examContainer">
+
+            <div class="empty-message">
+                Loading examinations...
+            </div>
+
+        </div>
+
+        <p id="message"></p>
+
+        <button
+            type="button"
+            class="back-button"
+            onclick="goBack()">
+            ← Back to Admin Dashboard
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let exams = [];
+
+
+/* =========================================================
+   LOAD EXAMS
+   ========================================================= */
+
+async function loadExams() {
+
+    const container =
+        document.getElementById("examContainer");
+
+    try {
+
+        const response =
+            await fetch("/api/exams");
+
+        if (!response.ok) {
+            throw new Error("Failed to load exams");
+        }
+
+        exams = await response.json();
+
+        if (exams.length === 0) {
+
+            container.innerHTML = `
+                <div class="empty-message">
+                    No examinations available.
+                </div>
+            `;
+
+            return;
+        }
+
+        container.innerHTML = "";
+
+        for (const exam of exams) {
+
+            await createExamCard(exam);
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        container.innerHTML = `
+            <div class="empty-message">
+                Unable to load examinations.
+            </div>
+        `;
+    }
+}
+
+
+/* =========================================================
+   CREATE EXAM CARD
+   ========================================================= */
+
+async function createExamCard(exam) {
+
+    const container =
+        document.getElementById("examContainer");
+
+    const card =
+        document.createElement("div");
+
+    card.className = "exam-card";
+
+    const date =
+        formatDate(exam.examinationDate);
+
+    const startTime =
+        formatTime(exam.startTime);
+
+    const endTime =
+        formatTime(exam.endTime);
+
+    card.innerHTML = `
+
+        <div class="exam-title">
+            ${escapeHtml(exam.examinationType)}
+        </div>
+
+        <div class="exam-details">
+
+            <div class="detail-box">
+                <div class="detail-label">
+                    Date
+                </div>
+
+                <div class="detail-value">
+                    ${date}
+                </div>
+            </div>
+
+            <div class="detail-box">
+                <div class="detail-label">
+                    Time
+                </div>
+
+                <div class="detail-value">
+                    ${startTime} - ${endTime}
+                </div>
+            </div>
+
+            <div class="detail-box">
+                <div class="detail-label">
+                    Year
+                </div>
+
+                <div class="detail-value">
+                    ${exam.year}
+                </div>
+            </div>
+
+            <div class="detail-box">
+                <div class="detail-label">
+                    Semester
+                </div>
+
+                <div class="detail-value">
+                    ${exam.semester}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="exam-details">
+
+            <div class="detail-box">
+
+                <div class="detail-label">
+                    First Group
+                </div>
+
+                <div class="detail-value">
+                    ${escapeHtml(exam.branch1)}
+                    -
+                    ${escapeHtml(exam.section1)}
+                </div>
+
+            </div>
+
+            <div class="detail-box">
+
+                <div class="detail-label">
+                    Subject
+                </div>
+
+                <div class="detail-value">
+                    ${escapeHtml(exam.subject1)}
+                </div>
+
+            </div>
+
+            <div class="detail-box">
+
+                <div class="detail-label">
+                    Second Group
+                </div>
+
+                <div class="detail-value">
+                    ${escapeHtml(exam.branch2)}
+                    -
+                    ${escapeHtml(exam.section2)}
+                </div>
+
+            </div>
+
+            <div class="detail-box">
+
+                <div class="detail-label">
+                    Subject
+                </div>
+
+                <div class="detail-value">
+                    ${escapeHtml(exam.subject2)}
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="student-section">
+
+            <div class="student-section-header">
+
+                <h3>
+                    Students
+                </h3>
+
+                <label
+                    class="select-all-label">
+
+                    <input
+                        type="checkbox"
+                        id="selectAll-${exam.id}"
+                        onchange="selectAllStudents(${exam.id})">
+
+                    Select All
+
+                </label>
+
+            </div>
+
+            <div
+                id="students-${exam.id}"
+                class="student-table-container">
+
+                <div class="empty-message">
+                    Loading students...
+                </div>
+
+            </div>
+
+            <div class="button-row">
+
+                <button
+                    type="button"
+                    class="action-button generate-button"
+                    onclick="generateSeating(${exam.id})">
+
+                    Generate Seating
+
+                </button>
+
+                <button
+                    type="button"
+                    class="action-button email-button"
+                    onclick="sendSelectedEmails(${exam.id})">
+
+                    Send Selected Emails
+
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+    container.appendChild(card);
+
+    await loadStudentsForExam(exam);
+}
+
+
+/* =========================================================
+   LOAD STUDENTS FOR EXAM
+   ========================================================= */
+
+async function loadStudentsForExam(exam) {
+
+    const container =
+        document.getElementById(
+            "students-" + exam.id
+        );
+
+    try {
+
+        const response =
+            await fetch("/api/students");
+
+        if (!response.ok) {
+            throw new Error(
+                "Unable to load students"
+            );
+        }
+
+        const students =
+            await response.json();
+
+        const examStudents =
+            students.filter(student => {
+
+                const firstGroup =
+                    student.year === exam.year
+                    &&
+                    student.branch
+                        .toLowerCase()
+                        ===
+                        exam.branch1
+                            .toLowerCase()
+                    &&
+                    student.section
+                        .toLowerCase()
+                        ===
+                        exam.section1
+                            .toLowerCase();
+
+                const secondGroup =
+                    student.year === exam.year
+                    &&
+                    student.branch
+                        .toLowerCase()
+                        ===
+                        exam.branch2
+                            .toLowerCase()
+                    &&
+                    student.section
+                        .toLowerCase()
+                        ===
+                        exam.section2
+                            .toLowerCase();
+
+                return firstGroup || secondGroup;
+            });
+
+        if (examStudents.length === 0) {
+
+            container.innerHTML = `
+                <div class="empty-message">
+                    No students found for this exam.
+                </div>
+            `;
+
+            return;
+        }
+
+        let html = `
+
+            <table class="student-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Select
+                        </th>
+
+                        <th>
+                            S.No
+                        </th>
+
+                        <th>
+                            Roll Number
+                        </th>
+
+                        <th>
+                            Branch
+                        </th>
+
+                        <th>
+                            Section
+                        </th>
+
+                        <th>
+                            Year
+                        </th>
+
+                        <th>
+                            Student Type
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+        `;
+
+        examStudents.forEach(
+            (student, index) => {
+
+                html += `
+
+                    <tr>
+
+                        <td>
+
+                            <input
+                                type="checkbox"
+                                class="student-checkbox-${exam.id}"
+                                value="${escapeHtml(
+                                    student.rollNumber
+                                )}">
+
+                        </td>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                student.rollNumber
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                student.branch
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                student.section
+                            )}
+                        </td>
+
+                        <td>
+                            ${student.year}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                student.studentType
+                            )}
+                        </td>
+
+                    </tr>
+                `;
+            }
+        );
+
+        html += `
+
+                </tbody>
+
+            </table>
+        `;
+
+        container.innerHTML = html;
+
+    } catch (error) {
+
+        console.error(error);
+
+        container.innerHTML = `
+            <div class="empty-message">
+                Unable to load students.
+            </div>
+        `;
+    }
+}
+
+
+/* =========================================================
+   SELECT ALL
+   ========================================================= */
+
+function selectAllStudents(examId) {
+
+    const selectAll =
+        document.getElementById(
+            "selectAll-" + examId
+        );
+
+    const checkboxes =
+        document.querySelectorAll(
+            ".student-checkbox-" + examId
+        );
+
+    checkboxes.forEach(
+        checkbox => {
+            checkbox.checked =
+                selectAll.checked;
+        }
+    );
+}
+
+
+/* =========================================================
+   GENERATE SEATING
+   ========================================================= */
+
+async function generateSeating(examId) {
+
+    showMessage(
+        "Generating seating arrangement...",
+        "success"
+    );
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/seating/generate/"
+                + examId,
+                {
+                    method: "POST"
+                }
+            );
+
+        const result =
+            await response.text();
+
+        if (!response.ok) {
+
+            showMessage(
+                result,
+                "error"
+            );
+
+            return;
+        }
+
+        showMessage(
+            result,
+            "success"
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            "Unable to generate seating.",
+            "error"
+        );
+    }
+}
+
+
+/* =========================================================
+   SEND SELECTED EMAILS
+   ========================================================= */
+
+async function sendSelectedEmails(examId) {
+
+    const checkboxes =
+        document.querySelectorAll(
+            ".student-checkbox-" + examId
+        );
+
+    const selectedRollNumbers = [];
+
+    checkboxes.forEach(
+        checkbox => {
+
+            if (checkbox.checked) {
+
+                selectedRollNumbers.push(
+                    checkbox.value
+                );
+            }
+        }
+    );
+
+    if (selectedRollNumbers.length === 0) {
+
+        showMessage(
+            "Please select at least one student.",
+            "error"
+        );
+
+        return;
+    }
+
+    showMessage(
+        "Sending emails to selected students...",
+        "success"
+    );
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/seating/send-selected-emails/"
+                + examId,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(
+                            selectedRollNumbers
+                        )
+                }
+            );
+
+        const result =
+            await response.text();
+
+        if (!response.ok) {
+
+            showMessage(
+                result,
+                "error"
+            );
+
+            return;
+        }
+
+        showMessage(
+            result,
+            "success"
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            "Unable to send emails.",
+            "error"
+        );
+    }
+}
+
+
+/* =========================================================
+   MESSAGE
+   ========================================================= */
+
+function showMessage(
+    text,
+    type
+) {
+
+    const message =
+        document.getElementById("message");
+
+    message.innerText = text;
+
+    message.className = "";
+
+    if (type === "success") {
+
+        message.classList.add(
+            "success-message"
+        );
+
+    } else {
+
+        message.classList.add(
+            "error-message"
+        );
+    }
+}
+
+
+/* =========================================================
+   FORMAT DATE
+   ========================================================= */
+
+function formatDate(dateString) {
+
+    if (!dateString) {
+        return "-";
+    }
+
+    const parts =
+        dateString.split("-");
+
+    if (parts.length !== 3) {
+        return dateString;
+    }
+
+    return parts[2]
+        + "-"
+        + parts[1]
+        + "-"
+        + parts[0];
+}
+
+
+/* =========================================================
+   FORMAT TIME
+   ========================================================= */
+
+function formatTime(timeString) {
+
+    if (!timeString) {
+        return "-";
+    }
+
+    const parts =
+        timeString.split(":");
+
+    let hour =
+        parseInt(parts[0]);
+
+    const minute =
+        parts[1];
+
+    const period =
+        hour >= 12
+            ? "PM"
+            : "AM";
+
+    hour =
+        hour % 12 || 12;
+
+    return hour
+        + ":"
+        + minute
+        + " "
+        + period;
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHtml(value) {
+
+    if (value === null
+        || value === undefined) {
+
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================================
+   BACK
+   ========================================================= */
+
+function goBack() {
+
+    window.location.href =
+        "admin-dashboard.html";
+}
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+loadExams();
+
+</script>
+
+</body>
+</html>

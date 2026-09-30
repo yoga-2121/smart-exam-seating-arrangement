@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Student Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #dcefff,
+                    #eef4ff
+                );
+        }
+
+
+        /* HEADER */
+
+        .header {
+
+            background: white;
+
+            padding: 20px 35px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0, 45, 100, 0.10);
+        }
+
+
+        .header h1 {
+
+            color: #123b91;
+
+            font-size: 25px;
+        }
+
+
+        .logout-button {
+
+            border: none;
+
+            padding: 10px 20px;
+
+            border-radius: 22px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2457dc,
+                    #6549df
+                );
+
+            color: white;
+
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+
+        /* MAIN */
+
+        .container {
+
+            max-width: 1100px;
+
+            margin: auto;
+
+            padding: 45px 20px;
+        }
+
+
+        .welcome {
+
+            text-align: center;
+
+            margin-bottom: 35px;
+        }
+
+
+        .welcome h2 {
+
+            color: #123b91;
+
+            font-size: 32px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .welcome p {
+
+            color: #5b6b85;
+
+            font-size: 16px;
+        }
+
+
+        /* CARDS */
+
+        .cards {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(250px, 1fr)
+                );
+
+            gap: 25px;
+        }
+
+
+        .card {
+
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 20px;
+
+            text-align: center;
+
+            box-shadow:
+                0 12px 30px
+                rgba(0, 45, 100, 0.12);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        .card:hover {
+
+            transform: translateY(-4px);
+
+            box-shadow:
+                0 18px 35px
+                rgba(0, 45, 100, 0.17);
+        }
+
+
+        .card-icon {
+
+            font-size: 42px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .card h3 {
+
+            color: #203f78;
+
+            font-size: 21px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .card p {
+
+            color: #667085;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+
+            margin-bottom: 20px;
+        }
+
+
+        .card-button {
+
+            border: none;
+
+            padding: 11px 24px;
+
+            border-radius: 24px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2457dc,
+                    #6549df
+                );
+
+            color: white;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+
+        /* PROFILE */
+
+        .profile-section {
+
+            margin-top: 30px;
+
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 10px 25px
+                rgba(0, 45, 100, 0.10);
+
+            display: none;
+        }
+
+
+        .profile-section h3 {
+
+            color: #123b91;
+
+            margin-bottom: 18px;
+        }
+
+
+        .profile-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(180px, 1fr)
+                );
+
+            gap: 15px;
+        }
+
+
+        .profile-item {
+
+            background: #f4f7ff;
+
+            padding: 14px;
+
+            border-radius: 10px;
+        }
+
+
+        .profile-item strong {
+
+            display: block;
+
+            color: #5b6b85;
+
+            font-size: 12px;
+
+            margin-bottom: 5px;
+        }
+
+
+        .profile-item span {
+
+            color: #263c68;
+
+            font-weight: 600;
+        }
+
+
+        #profileMessage {
+
+            color: #c62828;
+
+            margin-top: 10px;
+        }
+
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            .header {
+
+                padding: 18px 15px;
+            }
+
+
+            .header h1 {
+
+                font-size: 19px;
+            }
+
+
+            .logout-button {
+
+                padding: 8px 14px;
+
+                font-size: 12px;
+            }
+
+
+            .container {
+
+                padding: 30px 15px;
+            }
+
+
+            .welcome h2 {
+
+                font-size: 26px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<header class="header">
+
+    <h1>
+        Smart Exam Seating Arrangement
+    </h1>
+
+
+    <button
+        class="logout-button"
+        onclick="logout()">
+
+        Logout
+
+    </button>
+
+</header>
+
+
+
+<!-- MAIN -->
+
+<main class="container">
+
+
+    <!-- WELCOME -->
+
+    <section class="welcome">
+
+        <h2>
+            Welcome, Student!
+        </h2>
+
+        <p>
+            Access your profile, examination details,
+            and seating arrangement.
+        </p>
+
+    </section>
+
+
+
+    <!-- CARDS -->
+
+    <section class="cards">
+
+
+        <!-- PROFILE CARD -->
+
+        <div class="card">
+
+            <div class="card-icon">
+                🎓
+            </div>
+
+            <h3>
+                My Profile
+            </h3>
+
+            <p>
+                View your personal academic
+                and student details.
+            </p>
+
+            <button
+                class="card-button"
+                onclick="viewProfile()">
+
+                View Profile
+
+            </button>
+
+        </div>
+
+
+
+        <!-- EXAM CARD -->
+
+        <div class="card">
+
+            <div class="card-icon">
+                📋
+            </div>
+
+            <h3>
+                Exam Details
+            </h3>
+
+            <p>
+                View your upcoming examination
+                details and subject.
+            </p>
+
+            <button
+                class="card-button"
+                onclick="viewExam()">
+
+                View Exam
+
+            </button>
+
+        </div>
+
+
+
+        <!-- SEATING CARD -->
+
+        <div class="card">
+
+            <div class="card-icon">
+                🪑
+            </div>
+
+            <h3>
+                My Seating
+            </h3>
+
+            <p>
+                View your assigned room,
+                row, column, and seat number.
+            </p>
+
+            <button
+                class="card-button"
+                onclick="viewSeating()">
+
+                View Seating
+
+            </button>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- PROFILE DETAILS -->
+
+    <section
+        class="profile-section"
+        id="profileSection">
+
+        <h3>
+            My Profile
+        </h3>
+
+
+        <div
+            class="profile-grid"
+            id="profileGrid">
+
+        </div>
+
+
+        <p id="profileMessage"></p>
+
+    </section>
+
+
+</main>
+
+
+
+<script>
+
+
+/* =========================
+   GET LOGGED-IN STUDENT
+   ========================= */
+
+const rollNumber =
+    sessionStorage.getItem(
+        "studentRollNumber"
+    );
+
+
+/* =========================
+   CHECK LOGIN
+   ========================= */
+
+if (!rollNumber) {
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* =========================
+   VIEW PROFILE
+   ========================= */
+
+async function viewProfile() {
+
+    const profileSection =
+        document.getElementById(
+            "profileSection"
+        );
+
+
+    const profileGrid =
+        document.getElementById(
+            "profileGrid"
+        );
+
+
+    const profileMessage =
+        document.getElementById(
+            "profileMessage"
+        );
+
+
+    profileSection.style.display =
+        "block";
+
+
+    profileMessage.innerText =
+        "Loading profile...";
+
+
+    profileGrid.innerHTML = "";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/student/profile?rollNumber="
+                + encodeURIComponent(
+                    rollNumber
+                )
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to load profile"
+            );
+        }
+
+
+        const student =
+            await response.json();
+
+
+        if (!student) {
+
+            profileMessage.innerText =
+                "Student profile not found.";
+
+            return;
+        }
+
+
+        profileMessage.innerText = "";
+
+
+        profileGrid.innerHTML = `
+
+            <div class="profile-item">
+
+                <strong>Roll Number</strong>
+
+                <span>
+                    ${student.rollNumber}
+                </span>
+
+            </div>
+
+
+            <div class="profile-item">
+
+                <strong>Branch</strong>
+
+                <span>
+                    ${student.branch}
+                </span>
+
+            </div>
+
+
+            <div class="profile-item">
+
+                <strong>Section</strong>
+
+                <span>
+                    ${student.section}
+                </span>
+
+            </div>
+
+
+            <div class="profile-item">
+
+                <strong>Year</strong>
+
+                <span>
+                    ${student.year}
+                </span>
+
+            </div>
+
+
+            <div class="profile-item">
+
+                <strong>Student Type</strong>
+
+                <span>
+                    ${student.studentType}
+                </span>
+
+            </div>
+
+
+            <div class="profile-item">
+
+                <strong>Email</strong>
+
+                <span>
+                    ${student.email}
+                </span>
+
+            </div>
+
+        `;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        profileMessage.innerText =
+            "Unable to load student profile.";
+
+    }
+
+}
+
+
+/* =========================
+   EXAM DETAILS
+   ========================= */
+
+function viewExam() {
+
+    window.location.href =
+        "student-exam-details.html";
+
+}
+
+
+/* =========================
+   SEATING
+   ========================= */
+
+function viewSeating() {
+
+    window.location.href =
+        "student-seating.html";
+
+}
+
+
+/* =========================
+   LOGOUT
+   ========================= */
+
+function logout() {
+
+    sessionStorage.removeItem(
+        "studentRollNumber"
+    );
+
+
+    window.location.href =
+        "index.html";
+
+}
+
+</script>
+
+
+</body>
+
+</html>

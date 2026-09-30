@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Exam Seating Arrangement</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <div class="login-box">
+
+        <h1>Smart Exam Seating Arrangement</h1>
+
+        <h2>Your Seat • Your Future</h2>
+
+
+        <!-- LOGIN TABS -->
+
+        <div class="tabs">
+
+            <button
+                type="button"
+                id="studentTab"
+                class="tab active"
+                onclick="showStudentLogin()">
+
+                🎓 Student
+
+            </button>
+
+            <button
+                type="button"
+                id="adminTab"
+                class="tab"
+                onclick="showAdminLogin()">
+
+                👤 Admin
+
+            </button>
+
+        </div>
+
+
+        <!-- STUDENT LOGIN -->
+
+        <div id="studentLogin">
+
+            <label for="studentRollNumber">
+                Username (Roll Number)
+            </label>
+
+            <div class="input-box">
+
+                <span>👤</span>
+
+                <input
+                    type="text"
+                    id="studentRollNumber"
+                    placeholder="Enter Roll Number">
+
+            </div>
+
+
+            <label for="studentPassword">
+                Password
+            </label>
+
+            <div class="input-box">
+
+                <span>🔒</span>
+
+                <input
+                    type="password"
+                    id="studentPassword"
+                    placeholder="Enter Password">
+
+            </div>
+
+
+            <button
+                type="button"
+                class="login-button"
+                onclick="studentLogin()">
+
+                ↪ Login
+
+            </button>
+
+
+            <a
+                href="#"
+                onclick="forgotPassword(event)">
+
+                Forgot Password?
+
+            </a>
+
+        </div>
+
+
+        <!-- ADMIN LOGIN -->
+
+        <div
+            id="adminLogin"
+            style="display: none;">
+
+            <label for="adminId">
+                Admin ID
+            </label>
+
+            <div class="input-box">
+
+                <span>👤</span>
+
+                <input
+                    type="text"
+                    id="adminId"
+                    placeholder="Enter Admin ID">
+
+            </div>
+
+
+            <label for="adminPassword">
+                Password
+            </label>
+
+            <div class="input-box">
+
+                <span>🔒</span>
+
+                <input
+                    type="password"
+                    id="adminPassword"
+                    placeholder="Enter Password">
+
+            </div>
+
+
+            <button
+                type="button"
+                class="login-button"
+                onclick="adminLogin()">
+
+                ↪ Login
+
+            </button>
+
+
+            <a
+                href="#"
+                onclick="forgotPassword(event)">
+
+                Forgot Password?
+
+            </a>
+
+        </div>
+
+
+        <p id="message"></p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function showStudentLogin() {
+
+    document.getElementById("studentLogin").style.display = "block";
+
+    document.getElementById("adminLogin").style.display = "none";
+
+    document.getElementById("studentTab").classList.add("active");
+
+    document.getElementById("adminTab").classList.remove("active");
+
+    document.getElementById("message").innerText = "";
+}
+
+
+function showAdminLogin() {
+
+    document.getElementById("studentLogin").style.display = "none";
+
+    document.getElementById("adminLogin").style.display = "block";
+
+    document.getElementById("studentTab").classList.remove("active");
+
+    document.getElementById("adminTab").classList.add("active");
+
+    document.getElementById("message").innerText = "";
+}
+
+
+async function studentLogin() {
+
+    const rollNumber =
+        document.getElementById("studentRollNumber").value.trim();
+
+    const password =
+        document.getElementById("studentPassword").value.trim();
+
+    const message =
+        document.getElementById("message");
+
+
+    if (rollNumber === "" || password === "") {
+
+        message.innerText =
+            "Please enter Roll Number and Password.";
+
+        return;
+    }
+
+
+    try {
+
+        const response = await fetch(
+            "/api/student/login?rollNumber="
+            + encodeURIComponent(rollNumber)
+            + "&password="
+            + encodeURIComponent(password),
+            {
+                method: "POST"
+            }
+        );
+
+
+        const result = await response.text();
+
+
+        if (result === "Student Login Successful") {
+
+            sessionStorage.setItem(
+                "studentRollNumber",
+                rollNumber
+            );
+
+            window.location.href =
+                "student-dashboard.html";
+
+        } else {
+
+            message.innerText = result;
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        message.innerText =
+            "Unable to connect to the server.";
+    }
+}
+
+
+async function adminLogin() {
+
+    const adminId =
+        document.getElementById("adminId").value.trim();
+
+    const password =
+        document.getElementById("adminPassword").value.trim();
+
+    const message =
+        document.getElementById("message");
+
+
+    if (adminId === "" || password === "") {
+
+        message.innerText =
+            "Please enter Admin ID and Password.";
+
+        return;
+    }
+
+
+    try {
+
+        const response = await fetch(
+            "/api/admin/login?adminId="
+            + encodeURIComponent(adminId)
+            + "&password="
+            + encodeURIComponent(password),
+            {
+                method: "POST"
+            }
+        );
+
+
+        const result = await response.text();
+
+
+        if (result === "Admin Login Successful") {
+
+            window.location.href =
+                "admin-dashboard.html";
+
+        } else {
+
+            message.innerText = result;
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        message.innerText =
+            "Unable to connect to the server.";
+    }
+}
+
+
+function forgotPassword(event) {
+
+    event.preventDefault();
+
+    document.getElementById("message").innerText =
+        "Please contact the administrator to reset your password.";
+}
+
+</script>
+
+</body>
+
+</html>
